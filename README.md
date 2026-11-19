@@ -1,86 +1,66 @@
-# course / assistant
+<div align="center">
 
-<p align="center">
-  <strong>A citation-first RAG assistant for university course material.</strong><br>
-  Upload notes. Ask questions. Study from evidence.
-</p>
+# rag course assistant
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11">
-  <img src="https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">
-  <img src="https://img.shields.io/badge/Gradio-5-FF7C00?style=flat-square&logo=gradio&logoColor=white" alt="Gradio 5">
-  <img src="https://img.shields.io/badge/RAG-FAISS%20%2B%20BM25-7B61FF?style=flat-square" alt="RAG">
-  <img src="https://img.shields.io/badge/Model-Qwen2.5%201.5B-111111?style=flat-square" alt="Qwen">
-</p>
+**upload your notes, ask questions, study from evidence**
 
-## Why it exists
-
-An educational RAG assistant that ingests PDFs, slides, Word documents, Markdown, and text files, answers questions from course material with citations, and is engineered to run on **hardwares with limited resources.**
+<img alt="Python 3.11" src="https://img.shields.io/badge/Python%203.11-b6c4ff?style=flat-square&labelColor=1e1f25&logo=python&logoColor=e3e1e9"> <img alt="Qwen2.5 1.5B" src="https://img.shields.io/badge/Qwen2.5%201.5B-dce1ff?style=flat-square&labelColor=1e1f25&logo=huggingface&logoColor=e3e1e9"> <img alt="FAISS + BM25" src="https://img.shields.io/badge/FAISS%20%2B%20BM25-c6c6d0?style=flat-square&labelColor=1e1f25"> <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-b6c4ff?style=flat-square&labelColor=1e1f25&logo=fastapi&logoColor=e3e1e9"> <img alt="Gradio" src="https://img.shields.io/badge/Gradio%205-dce1ff?style=flat-square&labelColor=1e1f25&logo=gradio&logoColor=e3e1e9">
 
 ```text
 course files → semantic chunks → FAISS + BM25 → reranking → cited answer
 ```
 
-## Highlights
+</div>
 
-- Grounded answers with strict out-of-scope refusal
-- Page, module, chapter, topic, and source citations
-- Separate course-content and official-question-bank retrieval
-- Hybrid retrieval: dense vectors, BM25, and cross-encoder reranking
-- Bounded per-chat conversation memory
-- Qwen2.5-1.5B 4-bit GPU inference for consumer hardware
-- Modern Gradio study workspace for local use
+## What's in it
 
-## Quick start
+- answers only from your course material, with page, module, chapter and topic citations
+- refuses questions outside the course instead of guessing
+- hybrid retrieval: dense vectors, BM25 and a cross-encoder reranker
+- course notes and the official question bank are searched separately
+- reads PDFs, slides, Word documents, Markdown and plain text
+- runs Qwen2.5 1.5B in 4-bit, so a consumer GPU is enough
+- a Gradio study workspace with short per-chat memory
 
-```powershell
+## Install
+
+```bash
 git clone https://github.com/ahadarshx/rag-course-assistant.git
 cd rag-course-assistant
-
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Start the API:
+On Windows, activate with `.\.venv\Scripts\Activate.ps1`.
 
-```powershell
-uvicorn backend.api:app --reload --port 8000
+## Run
+
+```bash
+uvicorn backend.api:app --port 8000     # the API
+python frontend/gradio_app.py           # the app, in a second terminal
 ```
 
-Start the local interface in a second terminal:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-python frontend/gradio_app.py
-```
-
-Open `http://127.0.0.1:7860`, upload your notes, and click **Upload & index**.
+Open `http://127.0.0.1:7860`, upload your notes and click **Upload & index**.
 
 ## Configure
 
-```env
-MODEL_NAME=Qwen/Qwen2.5-1.5B-Instruct
-DEVICE=auto
-STRICT_EXTRACTIVE=false
-CONFIDENCE_THRESHOLD=0.35
-HISTORY_TURNS=6
-```
+Copy `.env.example` to `.env`:
 
-Set `STRICT_EXTRACTIVE=true` for verbatim evidence passages instead of generated summaries.
+| | |
+|---|---|
+| `MODEL_NAME` | `Qwen/Qwen2.5-1.5B-Instruct` |
+| `DEVICE` | `auto` |
+| `STRICT_EXTRACTIVE` | `true` for verbatim passages instead of summaries |
+| `CONFIDENCE_THRESHOLD` | `0.35`, below this it refuses |
+| `HISTORY_TURNS` | `6` |
 
-## Project map
+## Layout
 
-```text
-backend/       FastAPI, ingestion, retrieval, generation
-frontend/      Local Gradio study interface
-evaluation/    Golden-set evaluation script
-data/          Your uploaded course material
-vectorstore/   Local persisted FAISS index
-```
+| | |
+|---|---|
+| `backend/` | API, ingestion, retrieval, generation |
+| `frontend/` | the Gradio study app |
+| `evaluation/` | golden-set evaluation, run `python evaluation/evaluate.py evaluation/golden.example.json` |
+| `tests/` | `pytest` |
 
-## Evaluation
-
-```bash
-python evaluation/evaluate.py evaluation/golden.example.json
-```
+<sub>Qwen2.5 · FAISS · rank-bm25 · sentence-transformers · FastAPI · Gradio</sub>
