@@ -34,8 +34,8 @@ course files → semantic chunks → FAISS + BM25 → reranking → cited answer
 ## Quick start
 
 ```powershell
-git clone https://github.com/ahadarshx/RAG-Based-LLM.git
-cd RAG-Based-LLM
+git clone https://github.com/ahadarshx/rag-course-assistant.git
+cd rag-course-assistant
 
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
